@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ListOfPosts = async () => {
   const getPostData = async () => {
     const res = await fetch('https://jsonplaceholder.typicode.com/posts');
@@ -19,6 +17,13 @@ const ListOfPosts = async () => {
       {posts.map((post: any) => {
         return <p>{post.title}</p>;
       })}
+
+      <div>
+        <h1>USERS</h1>
+        {users.map((user: any) => {
+          return <p>{user.name}</p>;
+        })}
+      </div>
     </div>
   );
 };
