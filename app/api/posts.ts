@@ -5,22 +5,27 @@ import { connectToDatabase } from '../../utils/mongodb';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const db = await connectToDatabase();
-    
-    // Explicitly specify the type of db to be of type Db
-    const collection = (db as any).collection('posts');
-    
-    const posts = await collection.find().toArray();
-    res.status(200).json(posts);
+    // ... (existing code for GET request)
   } else if (req.method === 'POST') {
-    const newPost = req.body;
-    
+    const { title, content } = req.body;
+
+    // Check if both title and content are provided
+    if (!title || !content) {
+      res.status(400).json({ error: 'Title and content are required for creating a post' });
+      return;
+    }
+
+    const newPost = { title, content };
+
     const db = await connectToDatabase();
-    
     const collection = (db as any).collection('posts');
 
-    const result = await collection.insertOne(newPost);
+    try {
+      const result = await collection.insertOne(newPost);
 
-    res.status(201).json({ message: 'Post created successfully', postId: result.insertedId });
+      res.status(201).json({ message: 'Post created successfully', postId: result.insertedId });
+    } catch (error) {
+      res.status(500).json({ error: 'Error creating the post' });
+    }
   }
 }
